@@ -36,7 +36,7 @@ void Lexer::tokenize() {
 }
 
 void Lexer::handle_initial_state(char c) {
-  const char operators[] = {'+', '-', '*', '/'};
+  const char operators[] = {'+', '-', '*', '/', '(', ')'};
 
   if (isdigit(c)) {
     this->current_state = State::NUMBER;

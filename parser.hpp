@@ -8,10 +8,10 @@
 
 class ASTNode {
  public:
-  std::string type;
-  std::string value;
-  ASTNode* left;
-  ASTNode* right;
+  std::string type = "";
+  std::string value = "";
+  ASTNode* left = nullptr;
+  ASTNode* right = nullptr;
 
   explicit ASTNode(const std::string& n_type, const std::string& n_value = "",
                    ASTNode* n_left = nullptr, ASTNode* n_right = nullptr);
@@ -22,7 +22,7 @@ class Parser {
   int current_token_index = 0;
   std::vector<Token> tokens = {};
 
-  explicit Parser(std::vector<Token> tokens);
+  explicit Parser(const std::vector<Token>& tokens) : tokens(tokens) {};
 
   ASTNode parse();
 

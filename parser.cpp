@@ -7,8 +7,6 @@ ASTNode::ASTNode(const std::string& n_type, const std::string& n_value,
                  ASTNode* n_left, ASTNode* n_right)
     : type(n_type), value(n_value), left(n_left), right(n_right) {};
 
-Parser::Parser(const std::vector<Token> p_tokens) : tokens(p_tokens) {};
-
 ASTNode Parser::parse() { return this->expression(); };
 
 ASTNode Parser::expression() {

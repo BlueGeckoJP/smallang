@@ -5,10 +5,15 @@
 #include <vector>
 
 #include "lexer.hpp"
+#include "parser.hpp"
 
 int main(int, char**) {
-  std::string input_text = "add 123 + 456";
+  std::string input_text = "2+3*4*2";
   Lexer lexer = Lexer(input_text);
   lexer.tokenize();
   lexer.debug_print_tokens();
+  Parser parser = Parser(lexer.tokens);
+
+  ASTNode ast = parser.parse();
+  parser.print_ast(ast);
 }

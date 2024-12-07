@@ -4,5 +4,6 @@ project(smallang VERSION 0.1.0 LANGUAGES C CXX)
 add_executable(smallang
     main.cpp
     lexer.cpp
+    parser.cpp
 )
 
