@@ -8,7 +8,7 @@
             "type": "lldb",
             "request": "launch",
             "name": "Debug",
-            "program": "${workspaceFolder}/smallang",
+            "program": "${workspaceFolder}/out/build/Clang 18.1.8 x86_64-pc-linux-gnu/smallang",
             "args": [],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal"
