@@ -12,6 +12,7 @@ std::unique_ptr<ASTNode> Parser::parse() {
   return result;
 };
 
+// FIXME: The order of the calculations is wrong, please correct me
 std::unique_ptr<ASTNode> Parser::expression() {
   if (current_token_type() == "NONE") {
     throw std::runtime_error("Unexpected end of input");
@@ -19,7 +20,8 @@ std::unique_ptr<ASTNode> Parser::expression() {
 
   std::unique_ptr<ASTNode> left = term();
 
-  while (current_token_type() == "PLUS" || current_token_type() == "MINUS") {
+  while (current_token_type() == "MULTIPLY" ||
+         current_token_type() == "DIVIDE") {
     Token current_op = current_token();
     consume_token();
 
@@ -38,8 +40,7 @@ std::unique_ptr<ASTNode> Parser::term() {
 
   std::unique_ptr<ASTNode> left = factor();
 
-  while (current_token_type() == "MULTIPLY" ||
-         current_token_type() == "DIVIDE") {
+  while (current_token_type() == "PLUS" || current_token_type() == "MINUS") {
     Token current_op = current_token();
     consume_token();
 
