@@ -9,7 +9,7 @@
 #include "parser.hpp"
 
 int main(int, char**) {
-  std::string input_text = "2+3*4*2";
+  std::string input_text = "(2+3)*(0+5)";
   Lexer lexer = Lexer(input_text);
   lexer.tokenize();
   lexer.debug_print_tokens();

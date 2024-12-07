@@ -65,7 +65,7 @@ std::unique_ptr<ASTNode> Parser::factor() {
     consume_token();
     std::unique_ptr<ASTNode> node = expression();
 
-    if (c_token.type != "RIGHT_PAREN") {
+    if (current_token_type() != "RIGHT_PAREN") {
       throw std::runtime_error("Expected closing parenthesis");
     }
 
