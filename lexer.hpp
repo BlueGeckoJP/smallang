@@ -4,15 +4,9 @@
 #include <iostream>
 #include <vector>
 
+#include "token.hpp"
+
 enum class State { INITIAL, NUMBER, IDENTIFIER, OPERATOR };
-
-class Token {
- public:
-  std::string type = "";
-  std::string value = "";
-
-  Token(const std::string& t_type, const std::string& t_value);
-};
 
 class Lexer {
  public:
