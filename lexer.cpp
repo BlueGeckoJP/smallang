@@ -24,7 +24,12 @@ void Lexer::tokenize() {
       case State::IDENTIFIER:
         this->handle_identifier_state(current_char);
         break;
-      case State::OPERATOR:
+      case State::PLUS:
+      case State::MINUS:
+      case State::MULTIPLY:
+      case State::DIVIDE:
+      case State::LEFT_PAREN:
+      case State::RIGHT_PAREN:
         this->handle_operator_state();
         break;
     };
@@ -46,7 +51,26 @@ void Lexer::handle_initial_state(char c) {
     this->current_token_value = c;
   } else if (std::find(std::begin(operators), std::end(operators), c) !=
              std::end(operators)) {
-    this->current_state = State::OPERATOR;
+    switch (c) {
+      case '+':
+        this->current_state = State::PLUS;
+        break;
+      case '-':
+        this->current_state = State::MINUS;
+        break;
+      case '*':
+        this->current_state = State::MULTIPLY;
+        break;
+      case '/':
+        this->current_state = State::DIVIDE;
+        break;
+      case '(':
+        this->current_state = State::LEFT_PAREN;
+        break;
+      case ')':
+        this->current_state = State::RIGHT_PAREN;
+        break;
+    }
     this->current_token_value = c;
   } else if (!isspace(c)) {
     throw std::runtime_error("unexpected character");
@@ -89,10 +113,28 @@ std::string Lexer::determine_token_type() {
   switch (this->current_state) {
     case State::NUMBER:
       return "NUMBER";
+      break;
     case State::IDENTIFIER:
       return "IDENTIFIER";
-    case State::OPERATOR:
-      return "OPERATOR";
+      break;
+    case State::PLUS:
+      return "PLUS";
+      break;
+    case State::MINUS:
+      return "MINUS";
+      break;
+    case State::MULTIPLY:
+      return "MULTIPLY";
+      break;
+    case State::DIVIDE:
+      return "DIVIDE";
+      break;
+    case State::LEFT_PAREN:
+      return "LEFT_PAREN";
+      break;
+    case State::RIGHT_PAREN:
+      return "RIGHT_PAREN";
+      break;
     default:
       return "UNKNOWN";
   }

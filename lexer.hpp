@@ -6,7 +6,17 @@
 
 #include "token.hpp"
 
-enum class State { INITIAL, NUMBER, IDENTIFIER, OPERATOR };
+enum class State {
+  INITIAL,
+  NUMBER,
+  IDENTIFIER,
+  PLUS,
+  MINUS,
+  MULTIPLY,
+  DIVIDE,
+  LEFT_PAREN,
+  RIGHT_PAREN
+};
 
 class Lexer {
  public:

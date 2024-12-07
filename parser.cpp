@@ -1,88 +1,104 @@
 #include "parser.hpp"
 
 #include <iostream>
+#include <memory>
 #include <string>
 
-ASTNode::ASTNode(const std::string& n_type, const std::string& n_value,
-                 ASTNode* n_left, ASTNode* n_right)
-    : type(n_type), value(n_value), left(n_left), right(n_right) {};
+std::unique_ptr<ASTNode> Parser::parse() {
+  auto result = expression();
+  if (current_token_index < static_cast<int>(tokens.size())) {
+    throw std::runtime_error("Unexpected tokens at end of expression");
+  }
+  return result;
+};
 
-ASTNode Parser::parse() { return this->expression(); };
+std::unique_ptr<ASTNode> Parser::expression() {
+  if (current_token_type() == "NONE") {
+    throw std::runtime_error("Unexpected end of input");
+  }
 
-ASTNode Parser::expression() {
-  ASTNode left = this->term();
+  std::unique_ptr<ASTNode> left = term();
 
-  while (this->current_token_type() == "PLUS" ||
-         this->current_token_type() == "MINUS") {
-    Token current_op = this->current_token();
-    this->consume_token();
+  while (current_token_type() == "PLUS" || current_token_type() == "MINUS") {
+    Token current_op = current_token();
+    consume_token();
 
-    ASTNode right = this->term();
-    left = ASTNode("OPERATION", current_op.value, &left, &right);
+    std::unique_ptr<ASTNode> right = term();
+    left = std::unique_ptr<ASTNode>(new ASTNode(
+        "OPERATION", current_op.value, std::move(left), std::move(right)));
   }
 
   return left;
 };
 
-ASTNode Parser::term() {
-  ASTNode left = this->factor();
-  while (this->current_token_type() == "MULTIPLY" ||
-         this->current_token_type() == "DIVIDE") {
-    Token current_op = this->current_token();
-    this->consume_token();
+std::unique_ptr<ASTNode> Parser::term() {
+  if (current_token_type() == "NONE") {
+    throw std::runtime_error("Unexpected end of input");
+  }
 
-    ASTNode right = this->factor();
-    left = ASTNode("OPERATION", current_op.value, &left, &right);
+  std::unique_ptr<ASTNode> left = factor();
+
+  while (current_token_type() == "MULTIPLY" ||
+         current_token_type() == "DIVIDE") {
+    Token current_op = current_token();
+    consume_token();
+
+    std::unique_ptr<ASTNode> right = factor();
+    left = std::unique_ptr<ASTNode>(new ASTNode(
+        "OPERATION", current_op.value, std::move(left), std::move(right)));
   }
 
   return left;
 };
 
-ASTNode Parser::factor() {
-  Token current_token = this->current_token();
-  if (current_token.type == "NUMBER") {
-    ASTNode node = ASTNode("NUMBER", current_token.value);
-    this->consume_token();
-    return node;
-  } else if (current_token.type == "LEFT_PAREN") {
-    this->consume_token();
-    ASTNode node = this->expression();
+std::unique_ptr<ASTNode> Parser::factor() {
+  Token c_token = current_token();
 
-    if (this->current_token_type() != "RIGHT_PAREN") {
+  if (c_token.type == "NONE") {
+    throw std::runtime_error("Unexpected end of input");
+  }
+
+  if (c_token.type == "NUMBER") {
+    consume_token();
+    return std::unique_ptr<ASTNode>(new ASTNode("NUMBER", c_token.value));
+  } else if (c_token.type == "LEFT_PAREN") {
+    consume_token();
+    std::unique_ptr<ASTNode> node = expression();
+
+    if (c_token.type != "RIGHT_PAREN") {
       throw std::runtime_error("Expected closing parenthesis");
     }
 
-    this->consume_token();
+    consume_token();
     return node;
   }
   throw std::runtime_error("UNKNOWN token type");
 }
 
 Token Parser::current_token() {
-  if (this->current_token_index < static_cast<int>(this->tokens.size())) {
-    return this->tokens[this->current_token_index];
+  if (current_token_index < static_cast<int>(tokens.size())) {
+    return tokens[current_token_index];
   }
-  throw std::runtime_error("Unexpected end of input");
+  return Token("NONE", "");
 }
 
-std::string Parser::current_token_type() { return this->current_token().type; }
+std::string Parser::current_token_type() { return current_token().type; }
 
-void Parser::consume_token() { this->current_token_index++; }
+void Parser::consume_token() { current_token_index += 1; }
 
-void Parser::print_ast(ASTNode node, int level) {
-  std::vector<char> indent_c = {};
-  for (int i = 0; level != i; ++i) {
-    indent_c.push_back(' ');
-  }
-  std::string indent(indent_c.begin(), indent_c.end());
+void Parser::print_ast(const ASTNode* node, int level) {
+  if (!node) return;
 
-  std::cout << indent << node.type << ": " << node.value << std::endl;
+  std::string indent(level * 2, ' ');
 
-  if (node.left) {
+  std::cout << indent << node->type << ": " << node->value << std::endl;
+
+  if (node->left) {
     std::cout << indent << "Left: \n";
-    this->print_ast(*node.left, level + 1);
-  } else if (node.right) {
+    print_ast(node->left.get(), level + 1);
+  }
+  if (node->right) {
     std::cout << indent << "Right: \n";
-    this->print_ast(*node.right, level + 1);
+    print_ast(node->right.get(), level + 1);
   }
 }

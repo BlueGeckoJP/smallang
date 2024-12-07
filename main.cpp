@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <cctype>
 #include <iostream>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -14,6 +15,6 @@ int main(int, char**) {
   lexer.debug_print_tokens();
   Parser parser = Parser(lexer.tokens);
 
-  ASTNode ast = parser.parse();
-  parser.print_ast(ast);
+  auto ast = parser.parse();
+  parser.print_ast(ast.get());
 }

@@ -1,6 +1,7 @@
 #ifndef PARSER_HPP
 #define PARSER_HPP
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -10,11 +11,16 @@ class ASTNode {
  public:
   std::string type = "";
   std::string value = "";
-  ASTNode* left = nullptr;
-  ASTNode* right = nullptr;
+  std::unique_ptr<ASTNode> left;
+  std::unique_ptr<ASTNode> right;
 
-  explicit ASTNode(const std::string& n_type, const std::string& n_value = "",
-                   ASTNode* n_left = nullptr, ASTNode* n_right = nullptr);
+  explicit ASTNode(const std::string& type, const std::string& value = "",
+                   std::unique_ptr<ASTNode> left = nullptr,
+                   std::unique_ptr<ASTNode> right = nullptr)
+      : type(type),
+        value(value),
+        left(std::move(left)),
+        right(std::move(right)) {};
 };
 
 class Parser {
@@ -24,13 +30,13 @@ class Parser {
 
   explicit Parser(const std::vector<Token>& tokens) : tokens(tokens) {};
 
-  ASTNode parse();
+  std::unique_ptr<ASTNode> parse();
 
-  ASTNode expression();
+  std::unique_ptr<ASTNode> expression();
 
-  ASTNode term();
+  std::unique_ptr<ASTNode> term();
 
-  ASTNode factor();
+  std::unique_ptr<ASTNode> factor();
 
   Token current_token();
 
@@ -38,7 +44,7 @@ class Parser {
 
   void consume_token();
 
-  void print_ast(ASTNode node, int level = 0);
+  void print_ast(const ASTNode* node, int level = 0);
 };
 
 #endif
