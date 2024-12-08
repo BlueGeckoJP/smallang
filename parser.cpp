@@ -20,8 +20,7 @@ std::unique_ptr<ASTNode> Parser::expression() {
 
   std::unique_ptr<ASTNode> left = term();
 
-  while (current_token_type() == "MULTIPLY" ||
-         current_token_type() == "DIVIDE") {
+  while (current_token_type() == "PLUS" || current_token_type() == "MINUS") {
     Token current_op = current_token();
     consume_token();
 
@@ -40,7 +39,8 @@ std::unique_ptr<ASTNode> Parser::term() {
 
   std::unique_ptr<ASTNode> left = factor();
 
-  while (current_token_type() == "PLUS" || current_token_type() == "MINUS") {
+  while (current_token_type() == "MULTIPLY" ||
+         current_token_type() == "DIVIDE") {
     Token current_op = current_token();
     consume_token();
 
