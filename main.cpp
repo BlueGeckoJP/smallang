@@ -10,7 +10,10 @@
 #include "parser.hpp"
 
 int main(int, char**) {
-  std::string input_text = "8*2";
+  std::string input_text = "";
+  std::cout << "EXPR > ";
+  std::cin >> input_text;
+
   Lexer lexer = Lexer(input_text);
   lexer.tokenize();
   lexer.debug_print_tokens();
