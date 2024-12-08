@@ -5,11 +5,12 @@
 #include <string>
 #include <vector>
 
+#include "interpreter.hpp"
 #include "lexer.hpp"
 #include "parser.hpp"
 
 int main(int, char**) {
-  std::string input_text = "8*2+(1+3)/6";
+  std::string input_text = "8*2";
   Lexer lexer = Lexer(input_text);
   lexer.tokenize();
   lexer.debug_print_tokens();
@@ -17,4 +18,9 @@ int main(int, char**) {
 
   auto ast = parser.parse();
   parser.print_ast(ast.get());
+
+  Interpreter interpreter;
+  double result = interpreter.evalute(ast.get());
+
+  std::cout << "Result: " << result << std::endl;
 }

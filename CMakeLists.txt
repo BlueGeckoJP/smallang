@@ -6,5 +6,6 @@ add_executable(smallang
     main.cpp
     lexer.cpp
     parser.cpp
+    interpreter.cpp
 )
 
